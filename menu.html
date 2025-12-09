@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moss & Marble - Меню напитков</title>
+    <!-- Bootstrap CSS ТОЛЬКО для сетки -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" rel="stylesheet">
+    
+    <style>
+        /* СБРАСЫВАЕМ BOOTSTRAP ДЛЯ НАШИХ ЭЛЕМЕНТОВ */
+        body, h1, h2, h3, h4, h5, h6, p, div, span, a, button, input, label, form, ul, li {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #000;
+            background: none;
+            border: none;
+            text-decoration: none;
+            list-style: none;
+            box-sizing: border-box;
+        }
+        
+        /* HEADER С АДАПТИВНЫМ ТЕКСТОМ */
+        header {
+            background: #2d4a3b;
+            color: white;
+            padding: 0.8rem 0;
+            width: 100%;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        nav li {
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 16px; /* Базовый размер для десктопа */
+            padding: 4px 8px;
+            display: inline-block;
+            transition: font-size 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            text-decoration: underline;
+            color: white !important; /* ИСПРАВЛЕНИЕ: остаётся белым */
+        }
+        
+        .nav-link.active {
+            text-decoration: underline;
+            font-weight: bold;
+            color: white !important; /* ИСПРАВЛЕНИЕ: остаётся белым */
+        }
+        
+        /* ОСНОВНОЙ КОНТЕНТ */
+        .container {
+            padding: 20px 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* СЕТКА ДЛЯ КАРТОЧЕК */
+        .drinks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        /* КАРТОЧКА НАПИТКА */
+        .drink-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        /* КОНТЕЙНЕР ДЛЯ ИЗОБРАЖЕНИЯ */
+        .image-container {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+        
+        /* САМО ИЗОБРАЖЕНИЕ */
+        .drink-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .drink-image:hover {
+            transform: scale(1.05);
+        }
+        
+        /* ЗАГОЛОВОК С АДАПТИВНЫМ ШРИФТОМ */
+        .drink-title {
+            font-weight: bold;
+            font-size: 16px; /* Базовый размер для десктопа */
+            color: #000;
+            margin-bottom: 10px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            line-height: 1.3;
+            transition: font-size 0.3s ease;
+        }
+        
+        /* ЦЕНА С АДАПТИВНЫМ ШРИФТОМ */
+        .drink-price {
+            font-weight: bold;
+            font-size: 18px; /* Базовый размер для десктопа */
+            color: #000;
+            margin-bottom: 20px;
+            transition: font-size 0.3s ease;
+        }
+        
+        /* СЕКЦИЯ ЗАКАЗА */
+        .order-section {
+            margin-top: auto;
+            width: 100%;
+        }
+        
+        .order-label {
+            display: block;
+            font-size: 14px; /* Базовый размер для десктопа */
+            color: #000;
+            margin-bottom: 8px;
+            transition: font-size 0.3s ease;
+        }
+        
+        .order-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px; /* Базовый размер для десктопа */
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            transition: font-size 0.3s ease;
+        }
+        
+        /* КНОПКА В КОРЗИНУ С АДАПТИВНЫМ ТЕКСТОМ */
+        .cart-button {
+            display: block;
+            width: 200px;
+            padding: 12px;
+            background: #8a9b8f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px; /* Базовый размер для десктопа */
+            cursor: pointer;
+            margin: 30px auto;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .cart-button:hover {
+            background: #7a8a7e;
+        }
+        
+        /* ==================== */
+        /* АДАПТИВНОСТЬ ТЕКСТА! */
+        /* ==================== */
+        
+        /* ПЛАНШЕТЫ (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .nav-link {
+                font-size: 15px;
+                padding: 3px 6px;
+            }
+            
+            .nav-link:hover {
+                color: white !important; /* ИСПРАВЛЕНИЕ для планшетов */
+            }
+            
+            .nav-link.active {
+                color: white !important; /* ИСПРАВЛЕНИЕ для планшетов */
+            }
+            
+            .drink-title {
+                font-size: 15px;
+                min-height: 45px;
+            }
+            
+            .drink-price {
+                font-size: 17px;
+            }
+            
+            .order-label {
+                font-size: 13px;
+            }
+            
+            .order-input {
+                font-size: 13px;
+                width: 75px;
+                padding: 7px;
+            }
+            
+            .cart-button {
+                font-size: 15px;
+                padding: 11px;
+                width: 180px;
+            }
+        }
+        
+        /* СРЕДНИЕ МОБИЛЬНЫЕ (576px - 767px) */
+        @media (max-width: 767px) {
+            header {
+                padding: 0.6rem 0;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 3px;
+            }
+            
+            nav li {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .nav-link {
+                display: block;
+                padding: 6px;
+                width: 100%;
+                font-size: 14px;
+            }
+            
+            .nav-link:hover {
+                color: white !important; /* ИСПРАВЛЕНИЕ для мобильных */
+            }
+            
+            .nav-link.active {
+                color: white !important; /* ИСПРАВЛЕНИЕ для мобильных */
+            }
+            
+            .drinks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+            
+            .drink-card {
+                height: 380px;
+                padding: 12px;
+            }
+            
+            .image-container {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .drink-title {
+                font-size: 14px;
+                min-height: 42px;
+            }
+            
+            .drink-price {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .order-label {
+                font-size: 12px;
+            }
+            
+            .order-input {
+                font-size: 12px;
+                width: 70px;
+                padding: 6px;
+            }
+            
+            .cart-button {
+                font-size: 14px;
+                padding: 10px;
+                width: 160px;
+                margin: 25px auto;
+            }
+        }
+        
+        /* МАЛЕНЬКИЕ МОБИЛЬНЫЕ (481px - 575px) */
+        @media (max-width: 575px) {
+            .nav-link {
+                font-size: 13px;
+                padding: 5px;
+            }
+            
+            .nav-link:hover {
+                color: white !important; /* ИСПРАВЛЕНИЕ для маленьких экранов */
+            }
+            
+            .nav-link.active {
+                color: white !important; /* ИСПРАВЛЕНИЕ для маленьких экранов */
+            }
+            
+            .drinks-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .drink-card {
+                height: 360px;
+                padding: 10px;
+            }
+            
+            .image-container {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .drink-title {
+                font-size: 13px;
+                min-height: 40px;
+                line-height: 1.2;
+            }
+            
+            .drink-price {
+                font-size: 15px;
+            }
+            
+            .order-label {
+                font-size: 11px;
+            }
+            
+            .order-input {
+                font-size: 11px;
+                width: 65px;
+                padding: 5px;
+            }
+            
+            .cart-button {
+                font-size: 13px;
+                padding: 9px;
+                width: 140px;
+                margin: 20px auto;
+            }
+        }
+        
+        /* ОЧЕНЬ МАЛЕНЬКИЕ ЭКРАНЫ (до 480px) */
+        @media (max-width: 480px) {
+            .nav-link:hover {
+                color: white !important; /* ИСПРАВЛЕНИЕ для очень маленьких экранов */
+            }
+            
+            .nav-link.active {
+                color: white !important; /* ИСПРАВЛЕНИЕ для очень маленьких экранов */
+            }
+            
+            .drinks-grid {
+                grid-template-columns: 1fr;
+                max-width: 280px;
+                margin: 15px auto;
+                gap: 10px;
+            }
+            
+            .drink-card {
+                height: 340px;
+            }
+            
+            .image-container {
+                width: 130px;
+                height: 130px;
+            }
+            
+            .drink-title {
+                font-size: 12px;
+                min-height: 38px;
+            }
+            
+            .drink-price {
+                font-size: 14px;
+            }
+            
+            .order-label {
+                font-size: 10px;
+            }
+            
+            .order-input {
+                font-size: 10px;
+                width: 60px;
+                padding: 4px;
+            }
+            
+            .cart-button {
+                font-size: 12px;
+                padding: 8px;
+                width: 130px;
+                margin: 15px auto;
+            }
+        }
+        
+        /* ОЧЕНЬ-ОЧЕНЬ МАЛЕНЬКИЕ (до 360px) */
+        @media (max-width: 360px) {
+            .nav-link {
+                font-size: 12px;
+                padding: 4px;
+            }
+            
+            .nav-link:hover {
+                color: white !important; /* ИСПРАВЛЕНИЕ для экстремально маленьких */
+            }
+            
+            .nav-link.active {
+                color: white !important; /* ИСПРАВЛЕНИЕ для экстремально маленьких */
+            }
+            
+            .drink-card {
+                height: 320px;
+                padding: 8px;
+            }
+            
+            .image-container {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 10px;
+            }
+            
+            .drink-title {
+                font-size: 11px;
+                min-height: 36px;
+            }
+            
+            .drink-price {
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+            
+            .cart-button {
+                font-size: 11px;
+                width: 120px;
+            }
+        }
+        
+        /* ЗАЩИТА ОТ BOOTSTRAP */
+        .no-bootstrap {
+            font-family: Arial, sans-serif !important;
+            color: #000 !important;
+        }
+    </style>
+</head>
+<body class="no-bootstrap">
+    <!-- HEADER -->
+    <header>
+        <nav>
+            <ul>
+                <li><a class="nav-link" href="index.html">Главная</a></li>
+                <li><a class="nav-link active" href="menu.html">Меню напитков</a></li>
+                <li><a class="nav-link" href="contact.html">Контактные данные</a></li>
+                <li><a class="nav-link" href="special.html">Партнёры</a></li>
+                <li><a class="nav-link" href="originaldata.html">Оригинальные данные</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main class="container">
+        <form id="orderForm" action="https://jsonplaceholder.typicode.com/posts" method="POST">
+            <input name="q" type="hidden" value="search">
+            
+            <!-- СЕТКА КАРТОЧЕК -->
+            <div class="drinks-grid" id="drinks_container">
+                <!-- Карточки будут добавлены через JS -->
+            </div>
+            
+            <!-- КНОПКА -->
+            <button type="submit" class="cart-button">В корзину</button>
+        </form>
+    </main>
+
+    <script>
+        const drinksData = [
+            {
+                id: 1,
+                title: "Американо 'Туман долины фей'",
+                img: "Американо картинка.jpg",
+                price: 250,
+                vendor_code: "AM001"
+            },
+            {
+                id: 2,
+                title: "Эспрессо 'Слеза эльфийки'",
+                img: "Эспрессо картинка.jpg",
+                price: 280,
+                vendor_code: "ES002"
+            },
+            {
+                id: 3,
+                title: "Матча 'Изумрудный взгляд дриады'",
+                img: "Матча картинка.jpg",
+                price: 320,
+                vendor_code: "MA003"
+            },
+            {
+                id: 4,
+                title: "Фраппучино 'Дыхание лесного духа'",
+                img: "Фраппучино картинка.jpg",
+                price: 350,
+                vendor_code: "FR004"
+            },
+            {
+                id: 5,
+                title: "Латте 'Шёлковый покров нимфы'",
+                img: "Латте картинка.jpg",
+                price: 300,
+                vendor_code: "LA005"
+            },
+            {
+                id: 6,
+                title: "Айс-латте 'Эликсир горного духа'",
+                img: "Айс-латте картинка.jpg",
+                price: 330,
+                vendor_code: "AL006"
+            },
+            {
+                id: 7,
+                title: "Тыквенно-пряный латте 'Флюид ржавого солнца'",
+                img: "Тыквенный латте картинка.jpg",
+                price: 370,
+                vendor_code: "TP007"
+            },
+            {
+                id: 8,
+                title: "Капучино 'Отвар лесной ведьмы'",
+                img: "Капучино картинка.jpg", 
+                price: 290,
+                vendor_code: "CA008"
+            }
+        ];
+
+        function loadDrinks() {
+            const container = document.getElementById("drinks_container");
+            
+            drinksData.forEach(drink => {
+                const drinkElement = `
+                    <div class="drink-card">
+                        <div class="image-container">
+                            <img class="drink-image" src="${drink.img}" alt="${drink.title}" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjQ0NDIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4='">
+                        </div>
+                        <div class="drink-title">${drink.title}</div>
+                        <div class="drink-price">Цена: ${drink.price} р.</div>
+                        <input type="hidden" name="vendor_code_${drink.id}" value="${drink.vendor_code}">
+                        <div class="order-section">
+                            <label class="order-label">Заказать:</label>
+                            <input class="order-input" type="number" name="amount_${drink.id}" 
+                                   value="0" min="0" max="10" data-price="${drink.price}" 
+                                   data-vendor="${drink.vendor_code}" data-name="${drink.title}">
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += drinkElement;
+            });
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedDrinks = [];
+            let totalPrice = 0;
+            let totalItems = 0;
+
+            const inputs = document.querySelectorAll('.order-input');
+            inputs.forEach(input => {
+                const amount = parseInt(input.value);
+                if (amount > 0) {
+                    const drinkData = {
+                        name: input.dataset.name,
+                        amount: amount,
+                        price: parseInt(input.dataset.price),
+                        subtotal: amount * parseInt(input.dataset.price)
+                    };
+                    selectedDrinks.push(drinkData);
+                    totalPrice += drinkData.subtotal;
+                    totalItems += amount;
+                }
+            });
+
+            if (selectedDrinks.length === 0) {
+                alert('Пожалуйста, выберите хотя бы один напиток!');
+                return;
+            }
+
+            let orderString = "Заказ: ";
+            
+            selectedDrinks.forEach((drink, index) => {
+                if (index > 0) orderString += ", ";
+                orderString += `${drink.name} (${drink.amount} шт.)`;
+            });
+            
+            orderString += ` | Всего позиций: ${selectedDrinks.length} | Общее количество: ${totalItems} | Итого: ${totalPrice} руб.`;
+
+            const encodedOrder = encodeURIComponent(orderString);
+            const yandexUrl = `https://yandex.ru/#${encodedOrder}`;
+
+            window.open(yandexUrl, '_blank');
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDrinks();
+            
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPage = link.getAttribute('href');
+                
+                if (linkPage === currentPage || 
+                    (currentPage === '' && linkPage === 'index.html') ||
+                    (currentPage === 'menu.html' && linkPage === 'menu.html')) {
+                    
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>  
